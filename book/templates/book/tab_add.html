@@ -1,0 +1,192 @@
+{% extends 'book/base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<style>
+    .alert{
+        padding: 0;
+    }
+
+    .errorlist
+    {
+        margin-top: 1rem;
+    }
+
+    .alert ul 
+    {
+        list-style-type: none;
+    }
+    .date_not_enter
+    {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 20px;
+    }
+</style>
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        {% if date_not_enter %} <h6 class="alert alert-success date_not_enter">{{new_add}} is not enterd </h6> {% endif %}
+        {% if date_not_allowed %} <h6 class="alert alert-success date_not_enter">Entry For This Date is Not Allowed</h6> {% endif %}
+        {% if form_added %} <h6 class="alert alert-info date_not_enter"> 
+        {% for dat in data %}
+            {{dat.date}}
+        {% endfor %}
+             Metrics Added Successfully</h6> {% endif %}
+        <div class="row">
+            <div class="col-md-6  grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Add Metrics</h4>
+                        <p class="card-description"> Enter Basic Metrics for Calculations </p>
+                        <form class="forms-sample" method="POST" action="{% url 'book:tabadd' %}" id="form1">
+                            {% csrf_token %}
+                            {{ form.non_field_errors }}
+                            <div class="form-group">
+                                {{form.date.errors}}
+                                <label for="date">Date</label>
+                                {{form.date_submitted}}
+                                <!-- <input type="date" class="form-control" id="date" placeholder="Date"> -->
+                            </div>
+
+                            <div class="form-group">
+                                {% if form.bank.errors %}
+                                    <h3 class="alert alert-danger">{{form.bank.errors}}</h3>
+                                {% endif %}
+                                <label for="bank">Bank</label>
+                                {{form.bank}}
+                                <!-- <input type="text" name="bank" id="bank" class="form-control"
+                                    value="{% for dat in data %} {{dat.bank}} {% endfor %}"  onFocus="this.select();"> -->
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="janasevana">Janasevana</label>
+                                {{form.janasevana}}
+                                <!-- <input type="text" name="janasevana" id="janasevana" class="form-control" -->
+                                    <!-- value="{% for dat in data %} {{dat.janasevana}} {% endfor %}" onFocus="this.select();"> -->
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="borrow">Borrow</label>
+                                {{form.borrow}}
+                                <!-- <input type="text" name="borrow" id="borrow" class="form-control"
+                                    value="{% for dat in data %} {{dat.borrow}} {% endfor %}" onFocus="this.select();"> -->
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="internet">Internet</label>
+                                {{form.internet}}
+                                <!-- <input type="text" name="internet" id="internet" class="form-control"
+                                    value="{% for dat in data %} {{dat.internet}} {% endfor %}" onFocus="this.select();"> -->
+                            </div>
+
+                            <div class="form-group">
+                                <label for="utilities">Utilities</label>
+                                {{form.utilities}}
+                                <!-- <input type="text" name="utilities" id="utilities" class="form-control"
+                                    value="{% for dat in data %} {{dat.utilities}} {% endfor %}" onFocus="this.select();"> -->
+                            </div>
+
+                            <div class="form-group">
+                                <label for="recharge">Recharge</label>
+                                {{form.recharge}}
+                                <!-- <input type="text" name="recharge" id="recharge" class="form-control" -->
+                                <!-- value="{% for dat in data %} {{dat.recharge}} {% endfor %}" onFocus="this.select();"> -->
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inhand">Inhand</label>
+                                {{form.inhand}}
+                                <!-- <input type="text" name="inhand" id="inhand" class="form-control"
+                                value="{% for dat in data %} {{dat.inhand}} {% endfor %}" onFocus="this.select();"> -->
+                            </div>
+
+
+                            <button type="submit" id="cbutton" class="btn btn-gradient-primary mr-2" onClick="addVal()">Add Metrics</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 grid-margin ">
+                <div class="card">
+                    {{last_date}}
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            {%for dat in data %}
+                            {{dat.date}}
+                            {% endfor %} Metrics
+                        </h4>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="font-weight-bold"> Metric </th>
+                                        <th class="font-weight-bold"> Amount </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td id="{{forloop.counter}}lis">Bank</td>
+                                        <td id="{{forloop.counter}}val">₹ {% for dat in data %} {{dat.bank}} {% endfor %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="{{forloop.counter}}lis">Janasevana</td>
+                                        <td id="{{forloop.counter}}val">₹ {% for dat in data %} {{dat.janasevana}} {% endfor %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="{{forloop.counter}}lis">Borrow</td>
+                                        <td id="{{forloop.counter}}val">₹ {% for dat in data %} {{dat.borrow}} {% endfor %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="{{forloop.counter}}lis">Internet</td>
+                                        <td id="{{forloop.counter}}val">₹ {% for dat in data %} {{dat.internet}} {% endfor %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="{{forloop.counter}}lis">Utilities</td>
+                                        <td id="{{forloop.counter}}val">₹ {% for dat in data %} {{dat.utilities}} {% endfor %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="{{forloop.counter}}lis">Recharge</td>
+                                        <td id="{{forloop.counter}}val">₹ {% for dat in data %} {{dat.recharge}} {% endfor %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="{{forloop.counter}}lis">Inhand</td>
+                                        <td id="{{forloop.counter}}val">₹ {% for dat in data %} {{dat.inhand}} {% endfor %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="{{forloop.counter}}lis" class="font-weight-bold text-uppercase">Total</td>
+                                        <td id="{{forloop.counter}}val" class="font-weight-bold">₹ {% for dat in data %} {{dat.total}} {% endfor %}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('bank').value = "{% for dat in data %} {{dat.bank}} {% endfor %}"
+    document.getElementById('janasevana').value = "{% for dat in data %} {{dat.janasevana}} {% endfor %}"
+    document.getElementById('borrow').value = "{% for dat in data %} {{dat.borrow}} {% endfor %}"
+    document.getElementById('internet').value = "{% for dat in data %} {{dat.internet}} {% endfor %}"
+    document.getElementById('utilities').value = "{% for dat in data %} {{dat.utilities}} {% endfor %}"
+    document.getElementById('recharge').value = "{% for dat in data %} {{dat.recharge}} {% endfor %}"
+    document.getElementById('inhand').value = "{% for dat in data %} {{dat.inhand}} {% endfor %}"
+    
+    {% if form_not_valid %}
+        console.log("hai");
+        $("#form1 :input").attr("disabled", true);
+    {% endif %}
+
+    $('.date_not_enter').delay(5000).fadeOut('slow');
+
+</script>
+{% endblock %}
